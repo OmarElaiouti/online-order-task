@@ -6,6 +6,7 @@ using Delivery.Api.Dtos;
 using AutoMapper;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
+using Delivery.Api.Services;
 
 namespace Delivery.Api.Controllers
 {
@@ -15,13 +16,14 @@ namespace Delivery.Api.Controllers
     {
         private readonly RestaurantDeliveryDbContext _context;
         private readonly IMapper _mapper;
-        private readonly ILogger<OrderController> _logger; 
-
-        public OrderController(RestaurantDeliveryDbContext context, IMapper mapper, ILogger<OrderController> logger)
+        private readonly ILogger<OrderController> _logger;
+        private readonly EmailService _emailService;
+        public OrderController(RestaurantDeliveryDbContext context, IMapper mapper, ILogger<OrderController> logger, EmailService emailService)
         {
             _context = context;
             _mapper = mapper;
             _logger = logger;
+            _emailService = emailService;
         }
 
         [HttpPost]
@@ -63,6 +65,17 @@ namespace Delivery.Api.Controllers
                         RestaurantName = oi.MenuItem.Restaurant.Name
                     }).ToList()
                 };
+
+                var emailBody = $"Dear {newOrder.CustomerName},\n\n" +
+                                $"Thank you for your order. Your order ID is {newOrder.OrderId}.\n" +
+                                $"Total Amount: {detailedOrderResponse.TotalAmount}\n\n" +
+                                $"Order Details:\n" +
+                                $"{string.Join("\n", detailedOrderResponse.OrderItems.Select(item => $"{item.Quantity} x {item.MenuItemName} at {item.MenuItemPrice:C} from {item.RestaurantName}"))}";
+
+                await _emailService.SendEmailAsync(
+                    newOrder.CustomerEmail, 
+                    "Order Confirmation",
+                    emailBody);
 
                 return Ok(detailedOrderResponse);
             }

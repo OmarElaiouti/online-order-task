@@ -62,6 +62,23 @@ namespace Delivery.Api.Controllers
             }
         }
 
+        [HttpGet("cities-with-restaurants")]
+        public async Task<IActionResult> GetCitiesWithRestaurants()
+        {
+            var cities = await _context.Cities
+                .Include(c => c.Restaurants)
+                .ToListAsync();
+
+            if (cities == null || !cities.Any())
+            {
+                _logger.LogWarning("No cities found");
+                return NotFound();
+            }
+
+            var cityDtos = _mapper.Map<List<CityDto>>(cities);
+
+            return Ok(cityDtos);
+        }
 
         [HttpGet("cities")]
         public async Task<IActionResult> GetCities()

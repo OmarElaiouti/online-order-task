@@ -13,11 +13,11 @@ namespace Delivery.Api.MappingProfile
             CreateMap<Order, OrderDto>().ReverseMap();
             CreateMap<OrderItem, OrderItemDto>().ReverseMap();
             CreateMap<MenuItem, MenuItemDto>().ReverseMap();
-            CreateMap<Delivery.Api.Models.Restaurant, RestaurantDto>()
+            CreateMap<Restaurant, RestaurantDto>()
                .ForMember(dest => dest.CityName, opt => opt.MapFrom(src => src.City.CityName));
 
-            CreateMap<City, CityDto>();
-
+            CreateMap<City, CityDto>()
+            .ForMember(dest => dest.Restaurants, opt => opt.MapFrom(src => src.Restaurants));
 
         }
 
