@@ -98,15 +98,15 @@ namespace Delivery.Api.Controllers
                     {string.Join("", orderItems.Select(oi => $@"
                         <tr>
                             <td>{oi.MenuItem.Name}</td>
-                            <td>${oi.MenuItem.Price}</td>
+                            <td>{oi.MenuItem.Price}</td>
                             <td>{oi.Quantity}</td>
-                            <td>${oi.TotalPrice}</td>
+                            <td>{oi.TotalPrice}</td>
                             <td>{oi.MenuItem.Restaurant.Name}</td>
                         </tr>"))}
                 </tbody>
             </table>
             <hr />
-            <p><strong>Total Amount: ${detailedOrderResponse.TotalAmount}</strong></p>
+            <p><strong>Total Amount: {detailedOrderResponse.TotalAmount} Pounds </strong></p>
             <p>Your order will arrive as soon as possible.</p>
             <p>Thank you for ordering with us!</p>
         </div>
